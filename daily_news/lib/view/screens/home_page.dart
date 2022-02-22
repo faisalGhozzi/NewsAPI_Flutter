@@ -1,5 +1,5 @@
-import 'package:daily_news/news_list/models/article_model.dart';
-import 'package:daily_news/news_list/viewmodel/article_view_model.dart';
+import 'package:daily_news/model/article_model.dart';
+import 'package:daily_news/viewmodel/article_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 class HomePage extends StatelessWidget {
@@ -45,11 +45,17 @@ class HomePage extends StatelessWidget {
         itemBuilder: ((context, index) {
           Article article = articleViewModel.articleList[index];
           return Container(
+            padding: EdgeInsets.all(2),
             child: ListTile(
+              onTap: () {
+                // Navigator.of(context).push(MaterialPageRoute(
+                //   builder: (_) => 
+                // ))
+              },
               title: Text(article.title, maxLines: 1, overflow: TextOverflow.ellipsis,),
               subtitle: Text(article.description, maxLines: 3, overflow: TextOverflow.fade),
               leading: Container(
-                width: MediaQuery.of(context).size.width* .2,
+                width: MediaQuery.of(context).size.width* .3,
                 decoration: BoxDecoration(
                   image: DecorationImage(image: NetworkImage(article.urlToImage)),
                 ),

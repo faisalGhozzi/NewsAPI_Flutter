@@ -1,4 +1,4 @@
-import 'package:daily_news/news_list/models/article_model.dart';
+import 'package:daily_news/model/article_model.dart';
 
 class ArticleListModel{
   String status;

@@ -1,5 +1,5 @@
-import 'package:daily_news/home_page.dart';
-import 'package:daily_news/news_list/viewmodel/article_view_model.dart';
+import 'package:daily_news/view/screens/home_page.dart';
+import 'package:daily_news/viewmodel/article_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
