@@ -17,7 +17,16 @@ class NewsService{
       final uri = Uri.https(endPoint, '/v2/top-headlines', params);
       Response response = await dio.get(uri.toString());
       ArticleListModel articleListModel = ArticleListModel.fromJson(response.data);
-      return articleListModel.articles;
+      List<Article> cleanArticles = [];
+      for (var article in articleListModel.articles) {
+        if(article.urlToImage == "null" || article.title == "null" || article.source.name == "null"){
+          continue;
+        }
+        else{
+          cleanArticles.add(article);
+        }
+      }
+      return cleanArticles;
     } on DioError catch(e){
       print(e);
     }

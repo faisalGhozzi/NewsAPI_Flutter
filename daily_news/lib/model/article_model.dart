@@ -29,13 +29,13 @@ class Article {
     
     factory Article.fromJson(Map<String, dynamic> json) => Article(
         source: Source.fromJson(json['source']),
-        author: json["author"]?? "null",
-        title: json["title"],
+        author: json["author"]?? "Unknown",
+        title: json["title"]?? "null",
         description: json["description"]?? "null",
         url: json["url"],
         urlToImage: json["urlToImage"]?? "null",
         publishedAt: DateTime.parse(json["publishedAt"]),
-        content: json["content"] ?? "null",
+        content: json["content"] ?? "No content available for the moment",
     );
     
     Map<String, dynamic> toJson() => {

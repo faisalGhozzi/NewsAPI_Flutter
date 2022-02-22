@@ -9,7 +9,7 @@ class Source {
 
     factory Source.fromJson(Map<String, dynamic> json) => Source(
         id: json["id"] ?? "null",
-        name: json["name"],
+        name: json["name"] ?? "null",
     );
 
     Map<String, dynamic> toJson() => {
