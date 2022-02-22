@@ -1,5 +1,11 @@
 import 'source_model.dart';
+import 'dart:convert';
 
+List<Article> articleFromJson(String str) =>
+  List<Article>.from(json.decode(str).map((x) => Article.fromJson(x)));
+
+String articleToJson(List<Article> data) =>
+  json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 class Article {
     Source source;
     String author;
@@ -23,12 +29,23 @@ class Article {
     
     factory Article.fromJson(Map<String, dynamic> json) => Article(
         source: Source.fromJson(json['source']),
-        author: json["author"],
+        author: json["author"]?? "null",
         title: json["title"],
-        description: json["description"],
+        description: json["description"]?? "null",
         url: json["url"],
-        urlToImage: json["urlToImage"],
+        urlToImage: json["urlToImage"]?? "null",
         publishedAt: DateTime.parse(json["publishedAt"]),
-        content: json["content"],
+        content: json["content"] ?? "null",
     );
+    
+    Map<String, dynamic> toJson() => {
+        "source": source.toJson(),
+        "author": author,
+        "title": title,
+        "description": description,
+        "url": url,
+        "urlToImage": urlToImage,
+        "publishedAt": publishedAt.toIso8601String(),
+        "content": content,
+    };
 }

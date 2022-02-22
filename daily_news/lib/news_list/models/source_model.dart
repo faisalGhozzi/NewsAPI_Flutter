@@ -8,7 +8,7 @@ class Source {
     });
 
     factory Source.fromJson(Map<String, dynamic> json) => Source(
-        id: json["id"],
+        id: json["id"] ?? "null",
         name: json["name"],
     );
 
