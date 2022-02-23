@@ -20,7 +20,17 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(),
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text(
+                "NNews",
+                style: TextStyle(
+                  fontFamily: 'PlayfairDisplay',
+                  fontSize: 40,
+                ),
+        )
+      )
+      ,
       body: NewsPosts(),
     );
   }

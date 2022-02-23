@@ -1,9 +1,11 @@
 import 'package:daily_news/model/article_model.dart';
+import 'package:daily_news/view/widgets/custom_button.dart';
 import 'package:daily_news/view/widgets/custom_text_widget.dart';
 import 'package:daily_news/view/widgets/drop_shadow_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
 
 
 class ShowDetails extends StatefulWidget {
@@ -51,30 +53,41 @@ class _ShowDetailsState extends State<ShowDetails> {
           Expanded(
                   child: Align(
                     alignment: Alignment.bottomCenter,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          primary: Colors.red,
-                          onPrimary: Colors.white,
-                          elevation: 3,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5)
-                          ),
-                          minimumSize: Size(100, 40),
-                          ),
-                      onPressed: () async {
-                        try{
-                          launch(widget.article.url);
-                        }catch(e){
-                          print(e);
-                        }
-                      },
-                      child: const Text("Go to Source"),
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CustomButton(
+                          text: "Go To Source", 
+                          primary: Colors.red, 
+                          onPressed: () async {
+                            try{
+                              launch(widget.article.url);
+                            }catch(e){
+                              throw Exception("Couldn't open link : "+e.toString());
+                            }
+                          }),
+                          SizedBox(width: MediaQuery.of(context).size.width*0.1,),
+                          CustomButton(
+                          text: "Share News", 
+                          primary: Colors.blue, 
+                          onPressed: () => _onShare(context, widget.article.url))
+                      ],
+                    )
                     ),
                   )
           ],
         ),
       )
     );
+  }
+
+  void _onShare(BuildContext context, url) async {
+    final box = context.findRenderObject() as RenderBox?;
+
+    if (widget.article.url.isNotEmpty) {
+      await Share.share(url,
+          subject: "Check out this story",
+          sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+    }
   }
 }

@@ -13,135 +13,126 @@ class NewsPosts extends StatefulWidget {
 }
 
 class _NewsPostsState extends State<NewsPosts> {
-  int perPage = 10;
-  int present = 0;
-
-  List<Article> items = [];
-
   @override
   void initState() {
     super.initState();
-    setState(() {
-      items = Provider.of<ArticleViewModel>(context, listen: false)
-          .articleList
-          .getRange(present, present + perPage)
-          .toList(growable: true);
-      present = present + perPage;
-    });
+    Provider.of<ArticleViewModel>(context, listen: false)
+        .topHeadlinesByContent("apple");
   }
 
-  void loadMore() {
-    setState(() {
-      if ((present + perPage) >
-          Provider.of<ArticleViewModel>(context, listen: false)
-              .articleList
-              .length) {
-        items.addAll(Provider.of<ArticleViewModel>(context, listen: false)
-            .articleList
-            .getRange(
-                present,
-                Provider.of<ArticleViewModel>(context, listen: false)
-                    .articleList
-                    .length));
-      } else {
-        items.addAll(Provider.of<ArticleViewModel>(context, listen: false)
-            .articleList
-            .getRange(present, present + perPage));
-      }
-      present = present + perPage;
-    });
+  Widget _buildList(ArticleViewModel articleView) {
+    switch (articleView.loadingStatus) {
+      case LoadingStatus.searching:
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      case LoadingStatus.completed:
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: _ui(articleView) 
+        );
+      case LoadingStatus.empty:
+      default:
+        return const Center(
+          child: Text("No results found"),
+        );
+    }
+  }
+
+  void _selectCountry(ArticleViewModel articleViewModel, String country){
+    articleViewModel.topHeadlinesByCountry(country: country);
   }
 
   @override
   Widget build(BuildContext context) {
-    ArticleViewModel articleViewModel = context.watch<ArticleViewModel>();
-    return articleViewModel.loading
-        ? const Center(child: CircularProgressIndicator())
-        : Container(
-            child: Column(children: [
-              DropShadowWidget(
-                child: Column(
-                  children: const [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "NNews",
-                        style: TextStyle(
-                          fontFamily: 'PlayfairDisplay',
-                          fontSize: 40,
-                        ),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "your daily dose of news",
-                        style: TextStyle(
-                          fontFamily: 'Nunito',
-                          fontSize: 20,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                height: 0.1,
-                opacity: 0.2,
+    //ArticleViewModel articleViewModel = context.watch<ArticleViewModel>();
+    var articleView = Provider.of<ArticleViewModel>(context);
+    return Scaffold(
+      appBar: AppBar(
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              _selectCountry(articleView, value);
+              },
+              icon: const Icon(Icons.more_vert),
+              itemBuilder: (_) {
+                return Countries.keys.map((e) => PopupMenuItem(
+                  value: e,
+                  child: Text(e)
+                  )
+                ).toList();
+              },
+            )
+          ],
+      ),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Padding(
+              padding: EdgeInsets.only(left: 30),
+              child: Text(
+                'News',
+                style: TextStyle(fontSize: 50),
               ),
-              _ui(articleViewModel)
-            ]),
-          );
+            ),
+            const Divider(
+              height: 40,
+              color: Color(0xffFF8A30),
+              thickness: 8,
+              indent: 30,
+              endIndent: 20,
+            ),
+            const Padding(
+              padding: EdgeInsets.only(left: 30, top: 15, bottom: 15),
+              child: Text(
+                'Headline',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+            Expanded(
+              child: _buildList(articleView),
+            ),
+          ],
+        ),
+      )
+    );
   }
 
-  _ui(ArticleViewModel articleViewModel) {
-    return NotificationListener<ScrollNotification>(
-        onNotification: (ScrollNotification scrollInfo) {
-          if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-            loadMore();
-          }
-          return false;
-        },
-        child: Expanded(
-          child: ListView.separated(
-              itemBuilder: ((context, index) {
-                return (index == items.length)
-                    ? Container(
-                        color: Colors.greenAccent,
-                        child: CircularProgressIndicator()
-                      )
-                    : Container(
-                        padding: const EdgeInsets.all(2),
-                        child: ListTile(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) =>
-                                        ShowDetails(article: items[index])));
-                          },
-                          title: Text(
-                            items[index].title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          subtitle:
-                              Text("Source : " + items[index].source.name),
-                          leading: Container(
-                            width: MediaQuery.of(context).size.width * .3,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  image: NetworkImage(items[index].urlToImage)),
-                            ),
-                          ),
-                        ),
-                      );
-              }),
-              separatorBuilder: (context, index) => const Divider(),
-              itemCount: (present <=
-                      Provider.of<ArticleViewModel>(context, listen: false)
-                          .articleList
-                          .length)
-                  ? items.length + 1
-                  : items.length),
-        ));
+  static const Map<String, String> Countries = {
+    "English" : "us",
+    "French" : "fr",
+  };
+
+  _ui(ArticleViewModel articleViewModel){
+    return Expanded(
+      child: ListView.separated(
+        itemBuilder: ((context, index) {
+          Article article = articleViewModel.articles[index];
+          return Container(
+            padding: const EdgeInsets.all(2),
+            child: ListTile(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (_) => ShowDetails(article: article)
+                ));
+              },
+              title: Text(article.title, maxLines: 1, overflow: TextOverflow.ellipsis,),
+              subtitle: Text("Source : "+article.source.name),
+              leading: Container(
+                width: MediaQuery.of(context).size.width* .3,
+                decoration: BoxDecoration(
+                  image: DecorationImage(image: NetworkImage(article.urlToImage)),
+                ),
+              ),
+              ),
+          );
+        }), 
+        separatorBuilder: (context, index) => const Divider(), 
+        itemCount: articleViewModel.articles.length),
+        );
   }
 }
