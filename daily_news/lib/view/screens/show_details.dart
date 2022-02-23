@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:sqflite/sqflite.dart';
 
 
 class ShowDetails extends StatefulWidget {
@@ -91,3 +92,11 @@ class _ShowDetailsState extends State<ShowDetails> {
     }
   }
 }
+
+/*class DataBaseHelper {
+  DataBaseHelper._privateConstructor();
+  static final DataBaseHelper instance = DataBaseHelper._privateConstructor();
+
+  static Database? _database;
+  Future<Database> get database async => _database ??= await _initDatabase();
+}*/

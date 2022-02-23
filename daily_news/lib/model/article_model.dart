@@ -7,6 +7,7 @@ List<Article> articleFromJson(String str) =>
 String articleToJson(List<Article> data) =>
   json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 class Article {
+    int? id;
     Source source;
     String author;
     String title;
@@ -17,6 +18,7 @@ class Article {
     String content;
 
     Article({
+        this.id,
         required this.source,
         required this.author,
         required this.title,
@@ -28,18 +30,42 @@ class Article {
     });
     
     factory Article.fromJson(Map<String, dynamic> json) => Article(
+        id: json["_id"] as int?,
         source: Source.fromJson(json['source']),
         author: json["author"]?? "Unknown",
         title: json["title"]?? "null",
         description: json["description"]?? "null",
         url: json["url"],
         urlToImage: json["urlToImage"]?? "null",
-        publishedAt: DateTime.parse(json["publishedAt"]),
+        publishedAt: DateTime.parse(json["pu blishedAt"]),
         content: json["content"] ?? "No content available for the moment",
     );
     
+    Article copy({
+      int? id,
+      Source? source,
+      String? author,
+      String? title,
+      String? description,
+      String? url,
+      String? urlToImage,
+      DateTime? publishedAt,
+      String? content,
+    }) => Article(
+      id: id ?? this.id,
+      source: source ?? this.source,
+      author: author ?? this.author,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      url: url ?? this.url,
+      urlToImage: urlToImage ?? this.urlToImage,
+      publishedAt: publishedAt ?? this.publishedAt,
+      content: content ?? this.content
+    );
+
     Map<String, dynamic> toJson() => {
-        "source": source.toJson(),
+        "_id": id,
+        "source": source.name,
         "author": author,
         "title": title,
         "description": description,

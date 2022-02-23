@@ -1,9 +1,7 @@
-import 'package:daily_news/model/services/api_status.dart';
 import 'package:daily_news/model/article_list_model.dart';
 import 'package:daily_news/model/article_model.dart';
 import 'package:dio/dio.dart';
 import 'package:daily_news/auth/secret.dart';
-import 'package:intl/intl.dart';
 
 class NewsService{
   final endPoint = "newsapi.org";
