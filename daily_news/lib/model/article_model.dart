@@ -9,6 +9,7 @@ String articleToJson(List<Article> data) =>
 class Article {
     int? id;
     Source source;
+    String? sourceName;
     String author;
     String title;
     String description;
@@ -20,6 +21,7 @@ class Article {
     Article({
         this.id,
         required this.source,
+        this.sourceName,
         required this.author,
         required this.title,
         required this.description,
@@ -37,7 +39,7 @@ class Article {
         description: json["description"]?? "null",
         url: json["url"],
         urlToImage: json["urlToImage"]?? "null",
-        publishedAt: DateTime.parse(json["pu blishedAt"]),
+        publishedAt: DateTime.parse(json["publishedAt"]),
         content: json["content"] ?? "No content available for the moment",
     );
     

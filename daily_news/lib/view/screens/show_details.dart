@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:daily_news/model/services/articles_database.dart';
 
 
 class ShowDetails extends StatefulWidget {
@@ -22,14 +23,47 @@ class ShowDetails extends StatefulWidget {
 
 class _ShowDetailsState extends State<ShowDetails> {
 
+  late List<Article> articles;
+  bool isLoading = false;
   String titleClean(String s){
     return (s.lastIndexOf('-') != -1)? s.substring(0, s.lastIndexOf('-')):s;
   }
 
   @override
+  void initState() {
+    super.initState();
+    refreshFavorites();
+  }
+
+  Future refreshFavorites() async{
+    setState(() => isLoading = true);
+    articles = await ArticlesDatabase.instance.fetchAllArticles();
+    setState(() => isLoading = false);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: GestureDetector(
+              onTap: () {
+                final snackBar = SnackBar(
+                  content: const Text("Article added to favorites."),
+                  action: SnackBarAction(
+                    label: 'Undo',
+                    onPressed: () {},
+                  ),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              },
+              child: const Icon(Icons.favorite),
+            ),
+          ),
+        ],
+      ),
       body: SizedBox(
         height: double.infinity,
         child: Column(
@@ -71,7 +105,7 @@ class _ShowDetailsState extends State<ShowDetails> {
                           CustomButton(
                           text: "Share News", 
                           primary: Colors.blue, 
-                          onPressed: () => _onShare(context, widget.article.url))
+                          onPressed: () => _onShare(context, widget.article.url)),
                       ],
                     )
                     ),
@@ -93,10 +127,3 @@ class _ShowDetailsState extends State<ShowDetails> {
   }
 }
 
-/*class DataBaseHelper {
-  DataBaseHelper._privateConstructor();
-  static final DataBaseHelper instance = DataBaseHelper._privateConstructor();
-
-  static Database? _database;
-  Future<Database> get database async => _database ??= await _initDatabase();
-}*/

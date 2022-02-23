@@ -27,7 +27,7 @@ class ArticlesDatabase{
   Future _createDB(Database db, int version) async {
     await db.execute('''
       CREATE TABLE articles (
-        _id INTEGER PRIMARY KEY AUTO_INCREMENT,
+        _id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
         description TEXT NOT NULL,
         url TEXT NOT NULL,

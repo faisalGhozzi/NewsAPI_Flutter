@@ -18,21 +18,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text(
-                "NNews",
-                style: TextStyle(
-                  fontFamily: 'PlayfairDisplay',
-                  fontSize: 40,
-                ),
-        )
-      )
-      ,
-      body: NewsPosts(),
-    );
+    return NewsPosts();
+    
   }
 
   

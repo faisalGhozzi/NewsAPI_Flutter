@@ -4,6 +4,7 @@ import 'package:daily_news/view/widgets/drop_shadow_widget.dart';
 import 'package:daily_news/viewmodel/article_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class NewsPosts extends StatefulWidget {
   const NewsPosts({Key? key}) : super(key: key);
@@ -17,7 +18,7 @@ class _NewsPostsState extends State<NewsPosts> {
   void initState() {
     super.initState();
     Provider.of<ArticleViewModel>(context, listen: false)
-        .topHeadlinesByContent("apple");
+        .topHeadlinesByCountry();
   }
 
   Widget _buildList(ArticleViewModel articleView) {
@@ -45,19 +46,27 @@ class _NewsPostsState extends State<NewsPosts> {
 
   @override
   Widget build(BuildContext context) {
-    //ArticleViewModel articleViewModel = context.watch<ArticleViewModel>();
     var articleView = Provider.of<ArticleViewModel>(context);
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
+        title: const Text(
+                "NewsFeed",
+                style: TextStyle(
+                  fontFamily: 'PlayfairDisplay',
+                  fontSize: 40,
+                ),
+        ),
         actions: [
           PopupMenuButton<String>(
+            tooltip: "Article language",
             onSelected: (value) {
               _selectCountry(articleView, value);
               },
-              icon: const Icon(Icons.more_vert),
+              icon: const Icon(Icons.language),
               itemBuilder: (_) {
                 return Countries.keys.map((e) => PopupMenuItem(
-                  value: e,
+                  value: Countries[e],
                   child: Text(e)
                   )
                 ).toList();
@@ -69,34 +78,21 @@ class _NewsPostsState extends State<NewsPosts> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const Padding(
-              padding: EdgeInsets.only(left: 30),
-              child: Text(
-                'News',
-                style: TextStyle(fontSize: 50),
-              ),
-            ),
-            const Divider(
-              height: 40,
-              color: Color(0xffFF8A30),
-              thickness: 8,
-              indent: 30,
-              endIndent: 20,
-            ),
-            const Padding(
-              padding: EdgeInsets.only(left: 30, top: 15, bottom: 15),
-              child: Text(
-                'Headline',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
-            ),
             Expanded(
               child: _buildList(articleView),
             ),
           ],
+        ),
+      ),
+      
+      floatingActionButton: Tooltip(
+        richMessage: const TextSpan(text: 'Saved articles'),
+        child: FloatingActionButton(
+          onPressed: () {
+      
+          },
+          backgroundColor: Colors.red,
+          child:  const Icon(Icons.favorite),
         ),
       )
     );
@@ -108,8 +104,7 @@ class _NewsPostsState extends State<NewsPosts> {
   };
 
   _ui(ArticleViewModel articleViewModel){
-    return Expanded(
-      child: ListView.separated(
+    return ListView.separated(
         itemBuilder: ((context, index) {
           Article article = articleViewModel.articles[index];
           return Container(
@@ -125,14 +120,15 @@ class _NewsPostsState extends State<NewsPosts> {
               leading: Container(
                 width: MediaQuery.of(context).size.width* .3,
                 decoration: BoxDecoration(
-                  image: DecorationImage(image: NetworkImage(article.urlToImage)),
+                  image: DecorationImage(image: CachedNetworkImageProvider(
+                    article.urlToImage
+                    ),
                 ),
               ),
               ),
-          );
+          ));
         }), 
         separatorBuilder: (context, index) => const Divider(), 
-        itemCount: articleViewModel.articles.length),
-        );
+        itemCount: articleViewModel.articles.length);
   }
 }
