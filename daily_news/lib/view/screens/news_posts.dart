@@ -1,11 +1,13 @@
-import 'package:daily_news/model/article_model.dart';
+import 'package:daily_news/model/article.dart';
+import 'package:daily_news/view/screens/favorites_page.dart';
 import 'package:daily_news/view/screens/show_details.dart';
 import 'package:daily_news/view/widgets/drop_shadow_widget.dart';
 import 'package:daily_news/viewmodel/article_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-
+import 'package:flutter_svg_provider/flutter_svg_provider.dart';
+import 'package:loadmore/loadmore.dart';
 class NewsPosts extends StatefulWidget {
   const NewsPosts({Key? key}) : super(key: key);
 
@@ -14,11 +16,23 @@ class NewsPosts extends StatefulWidget {
 }
 
 class _NewsPostsState extends State<NewsPosts> {
+  List<Article> items = [];
+
+  int page = 1;
+
   @override
   void initState() {
     super.initState();
     Provider.of<ArticleViewModel>(context, listen: false)
-        .topHeadlinesByCountry();
+        .topHeadlinesByContent("apple", page);
+  }
+
+  void load() {
+    if (page <= 5) {
+      page += 1;
+      Provider.of<ArticleViewModel>(context, listen: false)
+          .topHeadlinesByContent("apple", page);
+    }
   }
 
   Widget _buildList(ArticleViewModel articleView) {
@@ -89,7 +103,9 @@ class _NewsPostsState extends State<NewsPosts> {
         richMessage: const TextSpan(text: 'Saved articles'),
         child: FloatingActionButton(
           onPressed: () {
-      
+            Navigator.push(context, MaterialPageRoute(
+                  builder: (_) => FavoritesPage()
+                ));
           },
           backgroundColor: Colors.red,
           child:  const Icon(Icons.favorite),
@@ -120,15 +136,46 @@ class _NewsPostsState extends State<NewsPosts> {
               leading: Container(
                 width: MediaQuery.of(context).size.width* .3,
                 decoration: BoxDecoration(
-                  image: DecorationImage(image: CachedNetworkImageProvider(
-                    article.urlToImage
-                    ),
-                ),
+                  image: DecorationImage(
+                        image: !urlExtension(article.urlToImage)
+                            ? Image.network(
+                                article.urlToImage,
+                                frameBuilder: (context, child, frame,
+                                    wasSynchronouslyLoaded) {
+                                  return const CircularProgressIndicator();
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Text("Image unavailable");
+                                },
+                              ).image
+                            : Svg(
+                                article.urlToImage,
+                                source: SvgSource.network,
+                              ),
+                      ),
               ),
               ),
           ));
         }), 
         separatorBuilder: (context, index) => const Divider(), 
         itemCount: articleViewModel.articles.length);
+  }
+
+    Future<bool> _loadMore() async {
+    print("onLoadMore");
+    await Future.delayed(const Duration(seconds: 0, milliseconds: 2000));
+    load();
+    return true;
+  }
+
+  Future<void> _refresh() async {
+    await Future.delayed(const Duration(seconds: 0, milliseconds: 2000));
+    page = 1;
+    Provider.of<ArticleViewModel>(context, listen: false).articles.clear();
+    load();
+  }
+
+  bool urlExtension(String s) {
+    return s.lastIndexOf('.svg') != -1;
   }
 }

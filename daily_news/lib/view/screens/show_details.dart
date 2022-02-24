@@ -1,4 +1,4 @@
-import 'package:daily_news/model/article_model.dart';
+import 'package:daily_news/model/article.dart';
 import 'package:daily_news/view/widgets/custom_button.dart';
 import 'package:daily_news/view/widgets/custom_text_widget.dart';
 import 'package:daily_news/view/widgets/drop_shadow_widget.dart';
@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:daily_news/model/services/articles_database.dart';
+
 
 
 class ShowDetails extends StatefulWidget {
@@ -27,18 +27,6 @@ class _ShowDetailsState extends State<ShowDetails> {
   bool isLoading = false;
   String titleClean(String s){
     return (s.lastIndexOf('-') != -1)? s.substring(0, s.lastIndexOf('-')):s;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    refreshFavorites();
-  }
-
-  Future refreshFavorites() async{
-    setState(() => isLoading = true);
-    articles = await ArticlesDatabase.instance.fetchAllArticles();
-    setState(() => isLoading = false);
   }
 
   @override
