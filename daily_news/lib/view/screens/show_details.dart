@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:hive/hive.dart';
 
 
@@ -35,7 +34,7 @@ class _ShowDetailsState extends State<ShowDetails> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 20),
-            child: GestureDetector(
+            child: widget.id == -1 ? GestureDetector(
               onTap: () {
                 Hive.box<Article>('articles').add(widget.article);
                 final snackBar = SnackBar(
@@ -50,7 +49,24 @@ class _ShowDetailsState extends State<ShowDetails> {
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
               },
               child: const Icon(Icons.favorite),
-            ),
+            ) : 
+            GestureDetector(
+              onTap: () {
+                Hive.box<Article>('articles').add(widget.article);
+                final snackBar = SnackBar(
+                  content: const Text("Article added to favorites."),
+                  action: SnackBarAction(
+                    label: 'Undo',
+                    onPressed: () {
+
+                    },
+                  ),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              },
+              child: const Icon(Icons.delete),
+            )
+            ,
           ),
         ],
       ),
