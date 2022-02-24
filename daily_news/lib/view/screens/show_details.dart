@@ -1,4 +1,5 @@
 import 'package:daily_news/model/article.dart';
+import 'package:daily_news/model/services/helper_functions.dart';
 import 'package:daily_news/view/screens/favorites_page.dart';
 import 'package:daily_news/view/widgets/custom_button.dart';
 import 'package:daily_news/view/widgets/custom_text_widget.dart';
@@ -24,10 +25,7 @@ class ShowDetails extends StatefulWidget {
 class _ShowDetailsState extends State<ShowDetails> {
   late List<Article> articles;
   bool isLoading = false;
-  String titleClean(String s){
-    return (s.lastIndexOf('-') != -1)? s.substring(0, s.lastIndexOf('-')):s;
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,7 +96,7 @@ class _ShowDetailsState extends State<ShowDetails> {
             
             child: Column(
               children: [
-                CustomTextWidget(text: titleClean(widget.article.title,), fontSize: 30, fontWeight: FontWeight.bold),
+                CustomTextWidget(text: HelperFunctions.titleClean(widget.article.title,), fontSize: 30, fontWeight: FontWeight.bold),
                 SizedBox(height: MediaQuery.of(context).size.height*0.01,),
                 CustomTextWidget(text: DateFormat.yMd().format(widget.article.publishedAt )+" - "+widget.article.source.name, fontStyle: FontStyle.italic, color: Colors.grey,),
                 SizedBox(height: MediaQuery.of(context).size.height*0.01,),
@@ -139,21 +137,6 @@ class _ShowDetailsState extends State<ShowDetails> {
       )
     );
   }
-
-  /*void addFavorite(Article article){
-    final articl = Article(
-      author: article.author, 
-      content: article.content, 
-      description: article.description,
-      publishedAt : article.publishedAt,
-      source : article.source,
-      title : article.title,
-      url : article.url,
-      urlToImage : article.urlToImage);
-
-      final box = Boxes.getFavorites();
-      box.add(articl);
-  }*/
 
   void _onShare(BuildContext context, url) async {
     final box = context.findRenderObject() as RenderBox?;

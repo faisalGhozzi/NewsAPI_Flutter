@@ -1,11 +1,13 @@
 import 'package:daily_news/model/article.dart';
 import 'package:daily_news/view/screens/favorites_page.dart';
+// import 'package:daily_news/view/screens/search_form.dart';
 import 'package:daily_news/view/screens/show_details.dart';
 import 'package:daily_news/view/widgets/drop_shadow_widget.dart';
 import 'package:daily_news/viewmodel/article_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:daily_news/model/services/helper_functions.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:loadmore/loadmore.dart';
 class NewsPosts extends StatefulWidget {
@@ -85,7 +87,17 @@ class _NewsPostsState extends State<NewsPosts> {
                   )
                 ).toList();
               },
-            )
+            ),
+          IconButton(
+            onPressed: () {
+              // Navigator.push(
+              //   context, 
+              //   MaterialPageRoute(
+              //     builder: (_) => SearchForm()
+              //     )
+              //     );
+            }, 
+            icon: const Icon(Icons.search))
           ],
       ),
       body: SafeArea(
@@ -150,7 +162,7 @@ class _NewsPostsState extends State<NewsPosts> {
                     width: MediaQuery.of(context).size.width * .3,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: !urlExtension(article.urlToImage)
+                        image: !HelperFunctions.urlExtension(article.urlToImage)
                             ? Image.network(
                                 article.urlToImage,
                                 frameBuilder: (context, child, frame,
@@ -177,7 +189,7 @@ class _NewsPostsState extends State<NewsPosts> {
     );
   }
 
-    Future<bool> _loadMore() async {
+  Future<bool> _loadMore() async {
     print("onLoadMore");
     await Future.delayed(const Duration(seconds: 0, milliseconds: 2000));
     load();
@@ -189,9 +201,5 @@ class _NewsPostsState extends State<NewsPosts> {
     page = 1;
     Provider.of<ArticleViewModel>(context, listen: false).articles.clear();
     load();
-  }
-
-  bool urlExtension(String s) {
-    return s.lastIndexOf('.svg') != -1;
   }
 }
