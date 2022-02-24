@@ -1,4 +1,5 @@
 import 'package:daily_news/model/article.dart';
+import 'package:daily_news/model/services/boxes.dart';
 import 'package:daily_news/view/widgets/custom_button.dart';
 import 'package:daily_news/view/widgets/custom_text_widget.dart';
 import 'package:daily_news/view/widgets/drop_shadow_widget.dart';
@@ -104,6 +105,21 @@ class _ShowDetailsState extends State<ShowDetails> {
     );
   }
 
+  void addFavorite(Article article){
+    final articl = Article(
+      author: article.author, 
+      content: article.content, 
+      description: article.description,
+      publishedAt : article.publishedAt,
+      source : article.source,
+      title : article.title,
+      url : article.url,
+      urlToImage : article.urlToImage);
+
+      final box = Boxes.getFavorites();
+      box.add(articl);
+  }
+
   void _onShare(BuildContext context, url) async {
     final box = context.findRenderObject() as RenderBox?;
 
@@ -114,4 +130,3 @@ class _ShowDetailsState extends State<ShowDetails> {
     }
   }
 }
-

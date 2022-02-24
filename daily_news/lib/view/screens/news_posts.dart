@@ -119,24 +119,37 @@ class _NewsPostsState extends State<NewsPosts> {
     "French" : "fr",
   };
 
-  _ui(ArticleViewModel articleViewModel){
-    return ListView.separated(
-        itemBuilder: ((context, index) {
-          Article article = articleViewModel.articles[index];
-          return Container(
-            padding: const EdgeInsets.all(2),
-            child: ListTile(
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (_) => ShowDetails(article: article)
-                ));
-              },
-              title: Text(article.title, maxLines: 1, overflow: TextOverflow.ellipsis,),
-              subtitle: Text("Source : "+article.source.name),
-              leading: Container(
-                width: MediaQuery.of(context).size.width* .3,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
+  _ui(ArticleViewModel articleViewModel) {
+    return RefreshIndicator(
+      onRefresh: _refresh,
+      child: LoadMore(
+        isFinish: page == 5,
+        onLoadMore: _loadMore,
+        whenEmptyLoad: false,
+        delegate: const DefaultLoadMoreDelegate(),
+        textBuilder: DefaultLoadMoreTextBuilder.english,
+        child: ListView.separated(
+            itemBuilder: ((context, index) {
+              Article article = articleViewModel.articles[index];
+              return Container(
+                padding: const EdgeInsets.all(2),
+                child: ListTile(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => ShowDetails(article: article)));
+                  },
+                  title: Text(
+                    article.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  subtitle: Text("Source : " + article.source.name),
+                  leading: Container(
+                    width: MediaQuery.of(context).size.width * .3,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
                         image: !urlExtension(article.urlToImage)
                             ? Image.network(
                                 article.urlToImage,
@@ -153,12 +166,15 @@ class _NewsPostsState extends State<NewsPosts> {
                                 source: SvgSource.network,
                               ),
                       ),
-              ),
-              ),
-          ));
-        }), 
-        separatorBuilder: (context, index) => const Divider(), 
-        itemCount: articleViewModel.articles.length);
+                    ),
+                  ),
+                ),
+              );
+            }),
+            separatorBuilder: (context, index) => const Divider(),
+            itemCount: articleViewModel.articles.length),
+      ),
+    );
   }
 
     Future<bool> _loadMore() async {
