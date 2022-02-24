@@ -1,4 +1,5 @@
 import 'package:daily_news/model/article.dart';
+import 'package:daily_news/view/screens/favorites_page.dart';
 import 'package:daily_news/view/widgets/custom_button.dart';
 import 'package:daily_news/view/widgets/custom_text_widget.dart';
 import 'package:daily_news/view/widgets/drop_shadow_widget.dart';
@@ -42,7 +43,7 @@ class _ShowDetailsState extends State<ShowDetails> {
                   action: SnackBarAction(
                     label: 'Undo',
                     onPressed: () {
-
+                      Hive.box<Article>('articles').deleteAt(widget.article.key);
                     },
                   ),
                   );
@@ -51,18 +52,35 @@ class _ShowDetailsState extends State<ShowDetails> {
               child: const Icon(Icons.favorite),
             ) : 
             GestureDetector(
-              onTap: () {
-                Hive.box<Article>('articles').add(widget.article);
-                final snackBar = SnackBar(
-                  content: const Text("Article added to favorites."),
-                  action: SnackBarAction(
-                    label: 'Undo',
-                    onPressed: () {
-
-                    },
-                  ),
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              onTap: () async {
+                showDialog(
+                  context: context, 
+                  builder: (context){
+                    return AlertDialog(
+                      title: const Text("Warning!"),
+                      content: const Text("Are you sure that you want to remove this article from your favorites?"),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                          Hive.box<Article>('articles').deleteAt(widget.id);
+                           Navigator.pop(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const FavoritesPage()
+                              )
+                            );
+                          // Navigator.of(context).pop();
+                          // Navigator.of(context).pop();
+                          }, 
+                          child: const Text("Delete", style: TextStyle(color: Colors.red),)),
+                        TextButton(
+                          onPressed: (){
+                            Navigator.of(context).pop(false);
+                          }, child: const Text("No"))
+                      ],
+                    );
+                  }
+                ); 
               },
               child: const Icon(Icons.delete),
             )

@@ -11,11 +11,11 @@ class ArticleViewModel extends ChangeNotifier {
   LoadingStatus loadingStatus = LoadingStatus.searching;
   List<Article> articles = [];
 
-  void topHeadlinesByCountry({String country = "us"}) async {
+  void topHeadlinesByCountry({String country = "us", required int page}) async {
     loadingStatus = LoadingStatus.searching;
     notifyListeners();
 
-    List<Article> newsArticles = await NewsService().getNews(country);
+    List<Article> newsArticles = await NewsService().getNews(country, page);
 
     articles = newsArticles
         .map((article) => Article(

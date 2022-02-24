@@ -54,8 +54,8 @@ class _NewsPostsState extends State<NewsPosts> {
     }
   }
 
-  void _selectCountry(ArticleViewModel articleViewModel, String country){
-    articleViewModel.topHeadlinesByCountry(country: country);
+  void _selectCountry(ArticleViewModel articleViewModel, String country, page){
+    articleViewModel.topHeadlinesByCountry(country: country, page: page);
   }
 
   @override
@@ -75,7 +75,7 @@ class _NewsPostsState extends State<NewsPosts> {
           PopupMenuButton<String>(
             tooltip: "Article language",
             onSelected: (value) {
-              _selectCountry(articleView, value);
+              _selectCountry(articleView, value, page);
               },
               icon: const Icon(Icons.language),
               itemBuilder: (_) {

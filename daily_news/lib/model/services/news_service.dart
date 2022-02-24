@@ -7,10 +7,11 @@ class NewsService {
   final endPoint = "newsapi.org";
   var dio = Dio();
 
-  Future<List<Article>> getNews(String country) async {
+  Future<List<Article>> getNews(String country, int page) async {
     final params = {
       'country': country,
       'apiKey': apiKey,
+      'page': page.toString()
     };
     try {
       final uri = Uri.https(endPoint, '/v2/top-headlines', params);
