@@ -11,7 +11,7 @@ List<Article> articleFromJson(String str) =>
 String articleToJson(List<Article> data) =>
   json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-@HiveType(typeId:  0)
+@HiveType(typeId: 0)
 class Article extends HiveObject{
     @HiveField(0)
     Source source;
@@ -52,28 +52,6 @@ class Article extends HiveObject{
         content: json["content"] ?? "No content available for the moment",
     );
     
-    // Article copy({
-    //   int? id,
-    //   Source? source,
-    //   String? author,
-    //   String? title,
-    //   String? description,
-    //   String? url,
-    //   String? urlToImage,
-    //   DateTime? publishedAt,
-    //   String? content,
-    // }) => Article(
-    //   id: id ?? this.id,
-    //   source: source ?? this.source,
-    //   author: author ?? this.author,
-    //   title: title ?? this.title,
-    //   description: description ?? this.description,
-    //   url: url ?? this.url,
-    //   urlToImage: urlToImage ?? this.urlToImage,
-    //   publishedAt: publishedAt ?? this.publishedAt,
-    //   content: content ?? this.content
-    // );
-
     Map<String, dynamic> toJson() => {
         "source": source,
         "author": author,

@@ -1,5 +1,4 @@
 import 'package:daily_news/model/article.dart';
-import 'package:daily_news/model/services/boxes.dart';
 import 'package:daily_news/view/widgets/custom_button.dart';
 import 'package:daily_news/view/widgets/custom_text_widget.dart';
 import 'package:daily_news/view/widgets/drop_shadow_widget.dart';
@@ -8,13 +7,13 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:hive/hive.dart';
 
 
 
 class ShowDetails extends StatefulWidget {
   
   final Article article;
-
   const ShowDetails({ Key? key, required this.article }) : super(key: key);
 
 
@@ -23,11 +22,17 @@ class ShowDetails extends StatefulWidget {
 }
 
 class _ShowDetailsState extends State<ShowDetails> {
-
   late List<Article> articles;
   bool isLoading = false;
   String titleClean(String s){
     return (s.lastIndexOf('-') != -1)? s.substring(0, s.lastIndexOf('-')):s;
+  }
+
+
+
+  void addFavorite(Article article) async {
+    final favoritesBox = Hive.box('articles');
+    favoritesBox.add(article);
   }
 
   @override
@@ -39,11 +44,15 @@ class _ShowDetailsState extends State<ShowDetails> {
             padding: const EdgeInsets.only(right: 20),
             child: GestureDetector(
               onTap: () {
+                
+                addFavorite(widget.article);
                 final snackBar = SnackBar(
                   content: const Text("Article added to favorites."),
                   action: SnackBarAction(
                     label: 'Undo',
-                    onPressed: () {},
+                    onPressed: () {
+
+                    },
                   ),
                   );
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -105,7 +114,7 @@ class _ShowDetailsState extends State<ShowDetails> {
     );
   }
 
-  void addFavorite(Article article){
+  /*void addFavorite(Article article){
     final articl = Article(
       author: article.author, 
       content: article.content, 
@@ -118,7 +127,7 @@ class _ShowDetailsState extends State<ShowDetails> {
 
       final box = Boxes.getFavorites();
       box.add(articl);
-  }
+  }*/
 
   void _onShare(BuildContext context, url) async {
     final box = context.findRenderObject() as RenderBox?;
