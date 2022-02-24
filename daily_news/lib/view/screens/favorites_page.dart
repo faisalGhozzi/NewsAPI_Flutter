@@ -15,11 +15,11 @@ class FavoritesPage extends StatefulWidget {
 
 class _FavoritesPageState extends State<FavoritesPage> {
   
-  @override
-  void dispose() {
-    Hive.box('articles').close();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   Hive.box('articles').close();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {

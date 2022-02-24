@@ -14,7 +14,7 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter<Article>(ArticleAdapter());
   Hive.registerAdapter<Source>(SourceAdapter());
-  //await Hive.openBox<Article>('articles');
+  await Hive.openBox<Article>('articles');
   runApp(const MyApp());
 }
 

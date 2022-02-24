@@ -12,9 +12,9 @@ import 'package:hive/hive.dart';
 
 
 class ShowDetails extends StatefulWidget {
-  
+  final int id;
   final Article article;
-  const ShowDetails({ Key? key, required this.article }) : super(key: key);
+  const ShowDetails({ Key? key, required this.article, this.id=-1 }) : super(key: key);
 
 
   @override
@@ -28,13 +28,6 @@ class _ShowDetailsState extends State<ShowDetails> {
     return (s.lastIndexOf('-') != -1)? s.substring(0, s.lastIndexOf('-')):s;
   }
 
-
-
-  void addFavorite(Article article) async {
-    final favoritesBox = Hive.box('articles');
-    favoritesBox.add(article);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,8 +37,7 @@ class _ShowDetailsState extends State<ShowDetails> {
             padding: const EdgeInsets.only(right: 20),
             child: GestureDetector(
               onTap: () {
-                
-                addFavorite(widget.article);
+                Hive.box<Article>('articles').add(widget.article);
                 final snackBar = SnackBar(
                   content: const Text("Article added to favorites."),
                   action: SnackBarAction(
