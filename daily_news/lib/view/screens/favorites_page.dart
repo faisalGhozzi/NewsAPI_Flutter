@@ -41,6 +41,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
           itemBuilder: (context, index) {
             Article? res = box.getAt(index);
             return Dismissible(
+              direction: DismissDirection.startToEnd,
               background: Container(
                 color: Colors.red,
                 padding: const EdgeInsets.only(left: 20),
@@ -60,7 +61,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (_) => ShowDetails(article: Article(author: res!.author, content: res.content, description: res.description, publishedAt: res.publishedAt, source: res.source, title: res.title, url: res.url, urlToImage: res.urlToImage), id: res.key,)
+                                  builder: (_) => ShowDetails(article: Article(author: res!.author, content: res.content, description: res.description, publishedAt: res.publishedAt, source: res.source, title: res.title, url: res.url, urlToImage: res.urlToImage), id: res.key,index: index,)
                               )
                             );
                         },

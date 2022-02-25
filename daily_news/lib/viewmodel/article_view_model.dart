@@ -11,13 +11,16 @@ class ArticleViewModel extends ChangeNotifier {
   LoadingStatus loadingStatus = LoadingStatus.searching;
   List<Article> articles = [];
 
-  void topHeadlinesByCountry({String country = "us", required int page}) async {
-    loadingStatus = LoadingStatus.searching;
+  void topHeadlinesByCountry(int page,{String country = "us"}) async {
+    List<Article> newsArticles = await NewsService().getNews(country,page);
+    if(articles.isNotEmpty)
+    {
+      articles.clear();
+    }
     notifyListeners();
 
-    List<Article> newsArticles = await NewsService().getNews(country, page);
-
-    articles = newsArticles
+  
+    articles.addAll(newsArticles
         .map((article) => Article(
             source: article.source,
             author: article.author,
@@ -27,7 +30,7 @@ class ArticleViewModel extends ChangeNotifier {
             urlToImage: article.urlToImage,
             publishedAt: article.publishedAt,
             content: article.content))
-        .toList();
+        .toList());
 
     if (articles.isEmpty) {
       loadingStatus = LoadingStatus.empty;
@@ -41,6 +44,10 @@ class ArticleViewModel extends ChangeNotifier {
   void topHeadlinesByContent(String content, int page) async {
     List<Article> newsArticles =
         await NewsService().fetchByContent(content, page);
+        if(articles.isNotEmpty)
+        {
+          articles.clear();
+        }
     notifyListeners();
 
     articles.addAll(newsArticles
