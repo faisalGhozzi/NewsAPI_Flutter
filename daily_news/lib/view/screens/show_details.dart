@@ -10,13 +10,11 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:hive/hive.dart';
 
-
-
 class ShowDetails extends StatefulWidget {
   final int id;
   final Article article;
-  const ShowDetails({ Key? key, required this.article, this.id=-1 }) : super(key: key);
-
+  final int index;
+  const ShowDetails({ Key? key, required this.article, this.id=-1,  this.index=-1 }) : super(key: key);
 
   @override
   _ShowDetailsState createState() => _ShowDetailsState();
@@ -34,18 +32,35 @@ class _ShowDetailsState extends State<ShowDetails> {
           Padding(
             padding: const EdgeInsets.only(right: 20),
             child: widget.id == -1 ? GestureDetector(
-              onTap: () {
-                Hive.box<Article>('articles').add(widget.article);
-                final snackBar = SnackBar(
+              onTap: () async {
+                final arts = Hive.box<Article>('articles');
+                bool exists = false;
+                if (arts.length > 0){
+                  for (var i = 0; i < arts.length; i++) {
+                    if(widget.article.title == arts.getAt(i)!.title){
+                      exists = true;
+                      break;
+                    }
+                  } 
+                }
+                if(exists){
+                  const snackBar = SnackBar(
+                    content: Text("Article already saved."),                    
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                }else{
+                  int i = await Hive.box<Article>('articles').add(widget.article);               
+                  final snackBar = SnackBar(
                   content: const Text("Article added to favorites."),
                   action: SnackBarAction(
                     label: 'Undo',
                     onPressed: () {
-                      Hive.box<Article>('articles').deleteAt(widget.article.key);
+                      Hive.box<Article>('articles').delete(i);
                     },
-                  ),
+                    ),
                   );
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                }
               },
               child: const Icon(Icons.favorite),
             ) : 
@@ -60,8 +75,8 @@ class _ShowDetailsState extends State<ShowDetails> {
                       actions: [
                         TextButton(
                           onPressed: () {
-                          Hive.box<Article>('articles').deleteAt(widget.id);
-                           Navigator.pop(
+                          Hive.box<Article>('articles').deleteAt(widget.index);
+                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                   builder: (_) => const FavoritesPage()
@@ -107,7 +122,7 @@ class _ShowDetailsState extends State<ShowDetails> {
                 ],
               )
             ),
-          Expanded(
+            Expanded(
                   child: Align(
                     alignment: Alignment.bottomCenter,
                     child: Row(
@@ -130,8 +145,8 @@ class _ShowDetailsState extends State<ShowDetails> {
                           onPressed: () => _onShare(context, widget.article.url)),
                       ],
                     )
-                    ),
-                  )
+                  ),
+            )
           ],
         ),
       )
