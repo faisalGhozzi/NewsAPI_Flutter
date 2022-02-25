@@ -8,12 +8,11 @@ class NewsService {
   final endPoint = "newsapi.org";
   var dio = Dio();
 
-  Future<List<Article>> getNews(String country,int page) async {
+  Future<List<Article>> getNews(String country) async {
 
     final params = {
       'country': country,
       'apiKey': apiKey,
-      'page':page.toString()
     };
 
       final uri = Uri.https(endPoint, '/v2/top-headlines', params);
@@ -25,6 +24,8 @@ class NewsService {
        }else{
          if (response.statusCode == 426){
            throw Exception("Api Key usage limit reached");
+         }else if (response.statusCode == 429){
+           throw Exception("Too many requests");
          }else{
            throw Exception("Failed to get articles");
          }

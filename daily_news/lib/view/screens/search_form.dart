@@ -50,7 +50,7 @@ class _SearchFormState extends State<SearchForm> {
       case LoadingStatus.completed:
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: articleView.articles.isNotEmpty ? _ui(articleView) : const Center(child: Text("Type something in search box")) 
+          child: articleView.articles.isNotEmpty ? _ui(articleView) : const Center(child: Text("")) 
         );
       case LoadingStatus.empty:
       default:

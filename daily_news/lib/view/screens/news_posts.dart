@@ -25,17 +25,8 @@ class _NewsPostsState extends State<NewsPosts> {
   @override
   void initState() {
     super.initState();
-        _refresh();
         Provider.of<ArticleViewModel>(context, listen: false)
-        .topHeadlinesByCountry(page, country: _selectedCountry);
-  }
-
-  void load() {
-    if (page <= 5) {
-      page += 1;
-      Provider.of<ArticleViewModel>(context, listen: false)
-          .topHeadlinesByCountry(page,country: _selectedCountry);
-    }
+        .topHeadlinesByCountry(country: _selectedCountry);
   }
 
   Widget _buildList(ArticleViewModel articleView) {
@@ -58,7 +49,7 @@ class _NewsPostsState extends State<NewsPosts> {
   }
 
  void _selectCountry(ArticleViewModel articleViewModel, String country, int page){
-    articleViewModel.topHeadlinesByCountry(page,country: country);
+    articleViewModel.topHeadlinesByCountry(country: country);
   }
 
   @override
@@ -138,73 +129,50 @@ class _NewsPostsState extends State<NewsPosts> {
   };
 
   _ui(ArticleViewModel articleViewModel) {
-    return RefreshIndicator(
-      onRefresh: _refresh,
-      child: LoadMore(
-        isFinish: page == 5,
-        onLoadMore: _loadMore,
-        whenEmptyLoad: false,
-        delegate: const DefaultLoadMoreDelegate(),
-        textBuilder: DefaultLoadMoreTextBuilder.english,
-        child: articleViewModel.articles.isNotEmpty ? ListView.separated(
-            itemBuilder: ((context, index) {
-              Article article = articleViewModel.articles[index];
-              return Container(
-                padding: const EdgeInsets.all(2),
-                child: ListTile(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => ShowDetails(article: article)));
-                  },
-                  title: Text(
-                    article.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  subtitle: Text("Source : " + article.source.name),
-                  leading: Container(
-                    width: MediaQuery.of(context).size.width * .3,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: !HelperFunctions.urlExtension(article.urlToImage)
-                            ? Image.network(
-                                article.urlToImage,
-                                frameBuilder: (context, child, frame,
-                                    wasSynchronouslyLoaded) {
-                                  return const CircularProgressIndicator();
-                                },
-                                errorBuilder: (context, error, stackTrace) {
-                                  return const Text("Image unavailable");
-                                },
-                              ).image
-                            : Svg(
-                                article.urlToImage,
-                                source: SvgSource.network,
-                              ),
-                      ),
-                    ),
+    return articleViewModel.articles.isNotEmpty ? ListView.separated(
+        itemBuilder: ((context, index) {
+          Article article = articleViewModel.articles[index];
+          return Container(
+            padding: const EdgeInsets.all(2),
+            child: ListTile(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => ShowDetails(article: article)));
+              },
+              title: Text(
+                article.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              subtitle: Text("Source : " + article.source.name),
+              leading: Container(
+                width: MediaQuery.of(context).size.width * .3,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: !HelperFunctions.urlExtension(article.urlToImage)
+                        ? Image.network(
+                            article.urlToImage,
+                            frameBuilder: (context, child, frame,
+                                wasSynchronouslyLoaded) {
+                              return const CircularProgressIndicator();
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Text("Image unavailable");
+                            },
+                          ).image
+                        : Svg(
+                            article.urlToImage,
+                            source: SvgSource.network,
+                          ),
                   ),
                 ),
-              );
-            }),
-            separatorBuilder: (context, index) => const Divider(),
-            itemCount: articleViewModel.articles.length) : const Center(child: Text("No data to show")),
-      ),
-    );
-  }
-
-  Future<bool> _loadMore() async {
-    await Future.delayed(const Duration(seconds: 0, milliseconds: 2000));
-    load();
-    return true;
-  }
-
-  Future<void> _refresh() async {
-    await Future.delayed(const Duration(seconds: 0, milliseconds: 750));
-    page = 1;
-    Provider.of<ArticleViewModel>(context, listen: false).articles.clear();
-    load();
+              ),
+            ),
+          );
+        }),
+        separatorBuilder: (context, index) => const Divider(),
+        itemCount: articleViewModel.articles.length) : const Center(child: CircularProgressIndicator(color: Colors.red),);
   }
 }

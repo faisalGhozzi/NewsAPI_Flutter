@@ -11,8 +11,8 @@ class ArticleViewModel extends ChangeNotifier {
   LoadingStatus loadingStatus = LoadingStatus.searching;
   List<Article> articles = [];
 
-  void topHeadlinesByCountry(int page,{String country = "fr"}) async {
-    List<Article> newsArticles = await NewsService().getNews(country,page);
+  void topHeadlinesByCountry({String country = "fr"}) async {
+    List<Article> newsArticles = await NewsService().getNews(country);
     notifyListeners();
     articles.addAll(newsArticles
         .map((article) => Article(
