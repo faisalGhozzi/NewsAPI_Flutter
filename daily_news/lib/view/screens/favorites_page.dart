@@ -1,5 +1,7 @@
 import 'package:daily_news/model/article.dart';
 import 'package:daily_news/model/services/helper_functions.dart';
+import 'package:daily_news/view/screens/home_page.dart';
+import 'package:daily_news/view/screens/news_posts.dart';
 import 'package:daily_news/view/screens/show_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
@@ -19,6 +21,10 @@ class _FavoritesPageState extends State<FavoritesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(icon: const Icon(Icons.arrow_back),onPressed: (){
+          Navigator.pushReplacement(context,MaterialPageRoute(builder: (_) => HomePage()));                
+        },
+      ),
         centerTitle: true,
         title: const Text(
                 "Favorites",

@@ -4,7 +4,8 @@ class CustomButton extends StatefulWidget {
   final Color primary;
   final String text;
   final VoidCallback onPressed;
-  const CustomButton({ Key? key, required this.text, required this.primary, required this.onPressed }) : super(key: key);
+  final double width;
+  const CustomButton({ Key? key, required this.text, required this.primary, required this.onPressed, required this.width }) : super(key: key);
 
   @override
   _CustomButtonState createState() => _CustomButtonState();
@@ -21,7 +22,7 @@ class _CustomButtonState extends State<CustomButton> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5)
                   ),
-                  minimumSize: const Size(100, 40),
+                  minimumSize: Size(widget.width, 40),
                   ),
               onPressed: widget.onPressed,
               child: Text(widget.text),

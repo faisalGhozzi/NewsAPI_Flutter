@@ -18,14 +18,16 @@ class NewsService {
 
       final uri = Uri.https(endPoint, '/v2/top-headlines', params);
       Response response = await dio.get(uri.toString());
-      //print(response.data);
        if (response.statusCode == 200) {
             ArticleListModel articleListModel =
           ArticleListModel.fromJson(response.data);
       return cleanArticles(articleListModel);
        }else{
-               throw Exception("Failed to get articles");
-
+         if (response.statusCode == 426){
+           throw Exception("Api Key usage limit reached");
+         }else{
+           throw Exception("Failed to get articles");
+         }
        }
   }
 
@@ -35,6 +37,7 @@ class NewsService {
       'q': content,
       'from': DateTime(date.year, date.month - 1, date.day).toString(),
       'sortBy': "publishedAt",
+      'searchIn' : 'title',
       'apiKey': apiKey,
       'page': page.toString()
     };

@@ -1,5 +1,6 @@
 import 'package:daily_news/model/article.dart';
 import 'package:daily_news/model/services/helper_functions.dart';
+import 'package:daily_news/view/screens/home_page.dart';
 import 'package:daily_news/view/screens/news_posts.dart';
 import 'package:daily_news/view/screens/show_details.dart';
 import 'package:daily_news/viewmodel/article_view_model.dart';
@@ -49,7 +50,7 @@ class _SearchFormState extends State<SearchForm> {
       case LoadingStatus.completed:
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: articleView.articles.isNotEmpty ? _ui(articleView) : Text("Type something in search box") 
+          child: articleView.articles.isNotEmpty ? _ui(articleView) : const Center(child: Text("Type something in search box")) 
         );
       case LoadingStatus.empty:
       default:
@@ -126,11 +127,12 @@ class _SearchFormState extends State<SearchForm> {
     return Scaffold(
       appBar: AppBar(centerTitle: true,
       leading: IconButton(icon: Icon(Icons.arrow_back),onPressed: (){
-         Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => NewsPosts()));
-                  },
+        Provider.of<ArticleViewModel>(context, listen: false).articles.clear();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (_) => HomePage()));
+      },
       ),
         title: const Text(
                 "Search News",
@@ -144,30 +146,36 @@ class _SearchFormState extends State<SearchForm> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Row(
-        children: [
-          Container(
-            width: 100,
-            height: 100,
-            alignment: Alignment.centerLeft,
-            child: TextField(
-                        controller: search,
-                        decoration: const InputDecoration(
-                          prefixIcon: Icon(Icons.search),
-                          hintText: 'Enter search',
-                          border: OutlineInputBorder(),
-                          filled: true,
-                          errorStyle: TextStyle(fontSize: 15),
-                        ),
-                        onChanged: (value) {
-                          _search = value;
-                        },
-                       
-                      ),
-          ),
-                    RawMaterialButton(
+            SizedBox(height: MediaQuery.of(context).size.height* 0.01,),
+            Container(
+              padding: EdgeInsets.only(left: 20, right: 20),
+              child: TextField(
+                controller: search,
+                onSubmitted: (x) {
+                  if (search.text.isNotEmpty) {
+                        if(articleView.articles.isNotEmpty){
+                          Provider.of<ArticleViewModel>(context, listen: false).articles.clear();
+                        }
+                        load(x);
+                        FocusManager.instance.primaryFocus!.unfocus();
+                      } else {
+                        setState(() {
+                          _autoValidate = AutovalidateMode.always;
+                        });
+                      }
+                },
+                decoration: InputDecoration(
+                  hintText: 'Enter search',
+                  border: const OutlineInputBorder(),
+                  filled: true,
+                  errorStyle: const TextStyle(fontSize: 15),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.search),
                     onPressed: () {
                       if (search.text.isNotEmpty) {
+                        if(articleView.articles.isNotEmpty){
+                          Provider.of<ArticleViewModel>(context, listen: false).articles.clear();
+                        }
                         load(search.text);
                         FocusManager.instance.primaryFocus!.unfocus();
                       } else {
@@ -176,23 +184,14 @@ class _SearchFormState extends State<SearchForm> {
                         });
                       }
                     },
-                    fillColor: Colors.red,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: const Padding(
-                      padding: EdgeInsets.all(15),
-                      child: Text(
-                        'Search',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ),
                   ),
-        ],
-          ),
+                ),
+                onChanged: (value) {
+                  _search = value;
+                },  
+              ),
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height* 0.05,),
             Expanded(child: _buildList(articleView))
           ],
         ),

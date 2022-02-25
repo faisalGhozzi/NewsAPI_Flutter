@@ -11,15 +11,9 @@ class ArticleViewModel extends ChangeNotifier {
   LoadingStatus loadingStatus = LoadingStatus.searching;
   List<Article> articles = [];
 
-  void topHeadlinesByCountry(int page,{String country = "us"}) async {
+  void topHeadlinesByCountry(int page,{String country = "fr"}) async {
     List<Article> newsArticles = await NewsService().getNews(country,page);
-    if(articles.isNotEmpty)
-    {
-      articles.clear();
-    }
     notifyListeners();
-
-  
     articles.addAll(newsArticles
         .map((article) => Article(
             source: article.source,
@@ -44,10 +38,7 @@ class ArticleViewModel extends ChangeNotifier {
   void topHeadlinesByContent(String content, int page) async {
     List<Article> newsArticles =
         await NewsService().fetchByContent(content, page);
-        if(articles.isNotEmpty)
-        {
-          articles.clear();
-        }
+
     notifyListeners();
 
     articles.addAll(newsArticles

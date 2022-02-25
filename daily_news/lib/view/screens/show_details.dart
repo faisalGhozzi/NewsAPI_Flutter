@@ -1,6 +1,7 @@
 import 'package:daily_news/model/article.dart';
 import 'package:daily_news/model/services/helper_functions.dart';
 import 'package:daily_news/view/screens/favorites_page.dart';
+import 'package:daily_news/view/screens/news_posts.dart';
 import 'package:daily_news/view/widgets/custom_button.dart';
 import 'package:daily_news/view/widgets/custom_text_widget.dart';
 import 'package:daily_news/view/widgets/drop_shadow_widget.dart';
@@ -28,6 +29,12 @@ class _ShowDetailsState extends State<ShowDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(icon: const Icon(Icons.arrow_back),onPressed: (){
+          widget.id == -1 ?
+          Navigator.of(context).pop() :
+          Navigator.pushReplacement(context,MaterialPageRoute(builder: (_) => FavoritesPage()));                
+        },
+      ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 20),
@@ -82,8 +89,6 @@ class _ShowDetailsState extends State<ShowDetails> {
                                   builder: (_) => const FavoritesPage()
                               )
                             );
-                          // Navigator.of(context).pop();
-                          // Navigator.of(context).pop();
                           }, 
                           child: const Text("Delete", style: TextStyle(color: Colors.red),)),
                         TextButton(
@@ -129,6 +134,7 @@ class _ShowDetailsState extends State<ShowDetails> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         CustomButton(
+                          width: 120,
                           text: "Go To Source", 
                           primary: Colors.red, 
                           onPressed: () async {
@@ -140,6 +146,7 @@ class _ShowDetailsState extends State<ShowDetails> {
                           }),
                           SizedBox(width: MediaQuery.of(context).size.width*0.1,),
                           CustomButton(
+                          width: 120,
                           text: "Share News", 
                           primary: Colors.blue, 
                           onPressed: () => _onShare(context, widget.article.url)),
