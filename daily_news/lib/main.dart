@@ -4,7 +4,10 @@ import 'package:daily_news/view/screens/home_page.dart';
 import 'package:daily_news/viewmodel/article_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
+import 'package:path/path.dart' as p; 
 
 
 void main() async {

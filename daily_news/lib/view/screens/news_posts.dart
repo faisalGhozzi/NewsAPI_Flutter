@@ -1,7 +1,8 @@
 import 'package:daily_news/model/article.dart';
 import 'package:daily_news/view/screens/favorites_page.dart';
-import 'package:daily_news/view/screens/search_form.dart';
+// import 'package:daily_news/view/screens/search_form.dart';
 import 'package:daily_news/view/screens/show_details.dart';
+import 'package:daily_news/view/widgets/drop_shadow_widget.dart';
 import 'package:daily_news/viewmodel/article_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,27 +19,21 @@ class NewsPosts extends StatefulWidget {
 
 class _NewsPostsState extends State<NewsPosts> {
   List<Article> items = [];
-  String _selectedCountry="us";
-  final _formKey = GlobalKey<FormState>();
-  var _autoValidate = AutovalidateMode.disabled;
-  var _search;
-  TextEditingController search = TextEditingController();
 
   int page = 1;
 
   @override
   void initState() {
     super.initState();
-        _refresh();
-        Provider.of<ArticleViewModel>(context, listen: false)
-        .topHeadlinesByCountry(1, country: _selectedCountry);
+    Provider.of<ArticleViewModel>(context, listen: false)
+        .topHeadlinesByContent("apple", page);
   }
 
   void load() {
     if (page <= 5) {
       page += 1;
       Provider.of<ArticleViewModel>(context, listen: false)
-          .topHeadlinesByCountry(page,country: _selectedCountry);
+          .topHeadlinesByContent("apple", page);
     }
   }
 
@@ -61,8 +56,8 @@ class _NewsPostsState extends State<NewsPosts> {
     }
   }
 
- void _selectCountry(ArticleViewModel articleViewModel, String country){
-    articleViewModel.topHeadlinesByCountry(page,country: country);
+  void _selectCountry(ArticleViewModel articleViewModel, String country, page){
+    articleViewModel.topHeadlinesByCountry(country: country, page: page);
   }
 
   @override
@@ -70,16 +65,6 @@ class _NewsPostsState extends State<NewsPosts> {
     var articleView = Provider.of<ArticleViewModel>(context);
     return Scaffold(
       appBar: AppBar(
-        leading:  IconButton(
-            onPressed: () {
-              Navigator.push(
-                context, 
-                MaterialPageRoute(
-                  builder: (_) => SearchForm()
-                  )
-                  );
-            }, 
-            icon: const Icon(Icons.search)),
         centerTitle: true,
         title: const Text(
                 "NewsFeed",
@@ -90,15 +75,9 @@ class _NewsPostsState extends State<NewsPosts> {
         ),
         actions: [
           PopupMenuButton<String>(
-            tooltip: "News by country",
+            tooltip: "Article language",
             onSelected: (value) {
-              setState(() {
-                _selectedCountry=value;
-                _selectCountry(articleView, _selectedCountry);
-              });
-              
-              
-              
+              _selectCountry(articleView, value, page);
               },
               icon: const Icon(Icons.language),
               itemBuilder: (_) {
@@ -109,7 +88,16 @@ class _NewsPostsState extends State<NewsPosts> {
                 ).toList();
               },
             ),
-         
+          IconButton(
+            onPressed: () {
+              // Navigator.push(
+              //   context, 
+              //   MaterialPageRoute(
+              //     builder: (_) => SearchForm()
+              //     )
+              //     );
+            }, 
+            icon: const Icon(Icons.search))
           ],
       ),
       body: SafeArea(
@@ -139,8 +127,8 @@ class _NewsPostsState extends State<NewsPosts> {
   }
 
   static const Map<String, String> Countries = {
-    "USA" : "us",
-    "Françe" : "fr",
+    "English" : "us",
+    "French" : "fr",
   };
 
   _ui(ArticleViewModel articleViewModel) {
@@ -202,6 +190,7 @@ class _NewsPostsState extends State<NewsPosts> {
   }
 
   Future<bool> _loadMore() async {
+    print("onLoadMore");
     await Future.delayed(const Duration(seconds: 0, milliseconds: 2000));
     load();
     return true;

@@ -3,30 +3,25 @@ import 'package:daily_news/model/article.dart';
 import 'package:dio/dio.dart';
 import 'package:daily_news/auth/secret.dart';
 
-
 class NewsService {
   final endPoint = "newsapi.org";
   var dio = Dio();
 
-  Future<List<Article>> getNews(String country,int page) async {
-
+  Future<List<Article>> getNews(String country, int page) async {
     final params = {
       'country': country,
       'apiKey': apiKey,
-      'page':page.toString()
+      'page': page.toString()
     };
-
+    try {
       final uri = Uri.https(endPoint, '/v2/top-headlines', params);
       Response response = await dio.get(uri.toString());
-      //print(response.data);
-       if (response.statusCode == 200) {
-            ArticleListModel articleListModel =
+      ArticleListModel articleListModel =
           ArticleListModel.fromJson(response.data);
       return cleanArticles(articleListModel);
-       }else{
-               throw Exception("Failed to get articles");
-
-       }
+    } on DioError catch (e) {
+      throw Exception(e);
+    }
   }
 
   Future<List<Article>> fetchByContent(String content, int page) async {
@@ -45,7 +40,7 @@ class NewsService {
           ArticleListModel.fromJson(response.data);
       return cleanArticles(articleListModel);
     } else {
-      throw Exception("Failed to get $content's articles");
+      throw Exception("Failled to get $content's articles");
     }
   }
 
