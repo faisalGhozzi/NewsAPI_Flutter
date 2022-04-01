@@ -1,4 +1,4 @@
-# appsolute_flutter_assignement
+# NewsAPI Flutter
 
 Hello!
 
@@ -84,5 +84,3 @@ For the infinite scroll pagination on the search screen please watch this demo v
 <img src="demo_resources/video_demo.gif" width=20% height=20%>
 
 <hr>
-
-## Thank you for your time
